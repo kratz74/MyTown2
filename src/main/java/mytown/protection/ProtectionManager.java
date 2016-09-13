@@ -11,6 +11,7 @@ import myessentials.utils.WorldUtils;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.entities.*;
+import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.entities.signs.SellSign;
 import mytown.new_datasource.MyTownUniverse;
@@ -119,7 +120,8 @@ public class ProtectionManager {
             if (Config.instance.mobTravelInTowns.get() && !spawn) {
                 return false;
             }
-            if(!getFlagValueAtLocation(FlagType.ENTITIES, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
+            Boolean flagValueAtLocation = getFlagValueAtLocation(FlagType.ENTITIES, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ));
+            if (flagValueAtLocation != null && !flagValueAtLocation) {
                 entity.setDead();
                 return true;
             }
@@ -255,7 +257,11 @@ public class ProtectionManager {
             Town town = MyTownUniverse.instance.blocks.get(dim, x >> 4, z >> 4).getTown();
             return town.getValueAtCoords(dim, x, y, z, flagType);
         } else {
-            return flagType.isWildPerm ? Wild.instance.flagsContainer.get(flagType).value : null;
+            if (flagType.isWildPerm) {
+                final Flag<T> flag =  Wild.instance.flagsContainer.get(flagType);
+                return flag != null ? flag.value : null;
+            }
+            return null;
         }
     }
 
