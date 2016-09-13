@@ -12,6 +12,7 @@ import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.AdminTown;
 import mytown.entities.Resident;
 import mytown.entities.Town;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -75,7 +76,7 @@ public class Ticker {
 
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
-        if (VisualsHandler.instance.isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId, (EntityPlayerMP) ev.getPlayer())) {
+        if (VisualsHandler.instance.isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId, ev.getPlayer())) {
             // Cancel event if it's a border that has been broken
             ev.setCanceled(true);
         }
