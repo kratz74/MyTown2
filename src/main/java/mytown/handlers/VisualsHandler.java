@@ -8,6 +8,7 @@ import myessentials.utils.WorldUtils;
 import mytown.entities.Plot;
 import mytown.entities.TownBlock;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.Packet;
@@ -297,9 +298,26 @@ public class VisualsHandler {
         }
     }
 
-    public boolean isBlockMarked(int x, int y, int z, int dim, EntityPlayerMP player) {
+    /**
+     * Check provided player against player stored in visual object.
+     * @param player Player to be checked.
+     * @param visualObject Visual object with player instance to compare to.
+     * @return Value of true if player objects points to the same player.
+     */
+    private static boolean matchPlayer(final EntityPlayer player, final VisualObject visualObject) {
+        if (player == null) {
+            return false;
+        }
+        if (visualObject.player == player) {
+            return true;
+        } else {
+            return player.getDisplayName().equals(visualObject.player.getDisplayName());
+        }
+    }
+
+    public boolean isBlockMarked(int x, int y, int z, int dim, EntityPlayer player) {
         for(VisualObject visualObject : markedBlocks) {
-            if(visualObject.player == player) {
+            if (matchPlayer(player, visualObject)) {
                 for (BlockCoords coord : visualObject.blockCoords) {
                     if (coord.x == x && coord.y == y && coord.z == z && coord.dim == dim) {
                         coord.packetSent = false;
