@@ -258,7 +258,7 @@ public class ProtectionManager {
     public static <T> T getFlagValueAtLocation(FlagType<T> flagType, int dim, int x, int y, int z) {
         if(MyTownUniverse.instance.blocks.contains(dim, x >> 4, z >> 4)) {
             Town town = MyTownUniverse.instance.blocks.get(dim, x >> 4, z >> 4).getTown();
-            return town.getValueAtCoords(dim, x, y, z, flagType);
+            return town != null ? town.getValueAtCoords(dim, x, y, z, flagType) : null;
         } else {
             if (flagType.isWildPerm) {
                 final Flag<T> flag =  Wild.instance.flagsContainer.get(flagType);
