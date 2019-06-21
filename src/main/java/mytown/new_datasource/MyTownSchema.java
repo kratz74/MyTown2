@@ -44,10 +44,10 @@ public class MyTownSchema extends Schema {
                 ");"));
         updates.add(new DBUpdate("07.25.2014.5", "Add RankPermissions Table", "CREATE TABLE IF NOT EXISTS " + bridge.prefix + "RankPermissions (" +
                 "node VARCHAR(100) NOT NULL," +
-                "rank VARCHAR(50) NOT NULL," +
+                "ranks VARCHAR(50) NOT NULL," +
                 "townName VARCHAR(32) NOT NULL," +
-                "PRIMARY KEY(node, rank, townName)," +
-                "FOREIGN KEY(rank, townName) REFERENCES " + bridge.prefix + "Ranks(name, townName) ON DELETE CASCADE ON UPDATE CASCADE" +
+                "PRIMARY KEY(node, ranks, townName)," +
+                "FOREIGN KEY(ranks, townName) REFERENCES " + bridge.prefix + "Ranks(name, townName) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.6", "Add Blocks Table", "CREATE TABLE IF NOT EXISTS " + bridge.prefix + "Blocks (" +
                 "dim INT NOT NULL," +
@@ -82,15 +82,15 @@ public class MyTownSchema extends Schema {
         updates.add(new DBUpdate("08.07.2014.1", "Add ResidentsToTowns Table", "CREATE TABLE IF NOT EXISTS " + bridge.prefix + "ResidentsToTowns (" +
                 "resident CHAR(36) NOT NULL," +
                 "town VARCHAR(32) NOT NULL," +
-                "rank VARCHAR(50) NOT NULL," +
+                "ranks VARCHAR(50) NOT NULL," +
                 "PRIMARY KEY(resident, town)," +
                 "FOREIGN KEY(resident) REFERENCES " + bridge.prefix + "Residents(uuid) ON DELETE CASCADE ON UPDATE CASCADE," +
-                "FOREIGN KEY(rank, town) REFERENCES " + bridge.prefix + "Ranks(name, townName) ON DELETE CASCADE ON UPDATE CASCADE" +
+                "FOREIGN KEY(ranks, town) REFERENCES " + bridge.prefix + "Ranks(name, townName) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("08.07.2014.2", "Add TownsToNations Table", "CREATE TABLE IF NOT EXISTS " + bridge.prefix + "TownsToNations (" +
                 "town VARCHAR(50)," +
                 "nation VARCHAR(50)," +
-                "rank CHAR(1) DEFAULT 'T'," +
+                "ranks CHAR(1) DEFAULT 'T'," +
                 "PRIMARY KEY(town, nation)," +
                 "FOREIGN KEY(town) REFERENCES " + bridge.prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
                 "FOREIGN KEY(nation) REFERENCES " + bridge.prefix + "Nations(name) ON DELETE CASCADE ON UPDATE CASCADE" +

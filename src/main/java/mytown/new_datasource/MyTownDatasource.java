@@ -161,7 +161,7 @@ public class MyTownDatasource extends DatasourceSQL {
             ResultSet rs = loadRankPermsStatement.executeQuery();
             while(rs.next()) {
                 Town town = getUniverse().towns.get(rs.getString("townName"));
-                Rank rank = town.ranksContainer.get(rs.getString("rank"));
+                Rank rank = town.ranksContainer.get(rs.getString("ranks"));
 
                 rank.permissionsContainer.add(rs.getString("node"));
             }
@@ -348,7 +348,7 @@ public class MyTownDatasource extends DatasourceSQL {
             while (rs.next()) {
                 Resident res = getUniverse().residents.get(UUID.fromString(rs.getString("resident")));
                 Town town = getUniverse().towns.get(rs.getString("town"));
-                Rank rank = town.ranksContainer.get(rs.getString("rank"));
+                Rank rank = town.ranksContainer.get(rs.getString("ranks"));
 
                 town.residentsMap.put(res, rank);
                 res.townsContainer.add(town);
@@ -398,7 +398,7 @@ public class MyTownDatasource extends DatasourceSQL {
 
 
                 nation.addTown(town);
-                nation.promoteTown(town, Nation.Rank.parse(rs.getString("rank")));
+                nation.promoteTown(town, Nation.Rank.parse(rs.getString("ranks")));
                 town.setNation(nation);
 
             }
@@ -642,13 +642,13 @@ public class MyTownDatasource extends DatasourceSQL {
                     s.setString(4, rank.getTown().getName());
                     s.executeUpdate();
 
-                    s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE rank=? AND townName=?", true);
+                    s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE ranks=? AND townName=?", true);
                     s.setString(1, rank.getName());
                     s.setString(2, rank.getTown().getName());
                     s.executeUpdate();
 
                     if (!rank.permissionsContainer.isEmpty()) {
-                        s = prepare("INSERT INTO " + prefix + "RankPermissions(node, rank, townName) VALUES(?, ?, ?)", true);
+                        s = prepare("INSERT INTO " + prefix + "RankPermissions(node, ranks, townName) VALUES(?, ?, ?)", true);
                         for (String perm : rank.permissionsContainer) {
                             s.setString(1, perm);
                             s.setString(2, rank.getName());
@@ -676,7 +676,7 @@ public class MyTownDatasource extends DatasourceSQL {
                     insertRankStatement.executeUpdate();
 
                     if (!rank.permissionsContainer.isEmpty()) {
-                        PreparedStatement insertRankPermStatement = prepare("INSERT INTO " + prefix + "RankPermissions(node, rank, townName) VALUES(?, ?, ?)", true);
+                        PreparedStatement insertRankPermStatement = prepare("INSERT INTO " + prefix + "RankPermissions(node, ranks, townName) VALUES(?, ?, ?)", true);
                         for (String perm : rank.permissionsContainer) {
                             insertRankPermStatement.setString(1, perm);
                             insertRankPermStatement.setString(2, rank.getName());
@@ -710,7 +710,7 @@ public class MyTownDatasource extends DatasourceSQL {
     public boolean saveRankPermission(Rank rank, String perm) {
         LOG.debug("Saving RankPermission {} for Rank {} in Town {}", perm, rank.getName(), rank.getTown().getName());
         try {
-            PreparedStatement s = prepare("INSERT INTO " + prefix + "RankPermissions (node, rank, townName) VALUES(?, ?, ?)", true);
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "RankPermissions (node, ranks, townName) VALUES(?, ?, ?)", true);
             s.setString(1, perm);
             s.setString(2, rank.getName());
             s.setString(3, rank.getTown().getName());
@@ -1044,7 +1044,7 @@ public class MyTownDatasource extends DatasourceSQL {
     
     public boolean linkResidentToTown(Resident res, Town town, Rank rank) {
         try {
-            PreparedStatement s = prepare("INSERT INTO " + prefix + "ResidentsToTowns (resident, town, rank) VALUES(?, ?, ?)", true);
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "ResidentsToTowns (resident, town, ranks) VALUES(?, ?, ?)", true);
             s.setString(1, res.getUUID().toString());
             s.setString(2, town.getName());
             // You need rank since this method is the one that adds the resident to the town and vice-versa
@@ -1082,7 +1082,7 @@ public class MyTownDatasource extends DatasourceSQL {
     
     public boolean updateResidentToTownLink(Resident res, Town town, Rank rank) {
         try {
-            PreparedStatement s = prepare("UPDATE " + prefix + "ResidentsToTowns SET rank = ? WHERE resident = ? AND town = ?", true);
+            PreparedStatement s = prepare("UPDATE " + prefix + "ResidentsToTowns SET ranks = ? WHERE resident = ? AND town = ?", true);
             s.setString(1, rank.getName());
             s.setString(2, res.getUUID().toString());
             s.setString(3, town.getName());
@@ -1101,7 +1101,7 @@ public class MyTownDatasource extends DatasourceSQL {
     
     public boolean linkTownToNation(Town town, Nation nation) {
         try {
-            PreparedStatement s = prepare("INSERT INTO " + prefix + "TownsToNations (town, nation, rank) VALUES(?, ?, ?);", true);
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "TownsToNations (town, nation, ranks) VALUES(?, ?, ?);", true);
             s.setString(1, town.getName());
             s.setString(2, nation.getName());
             s.setString(3, nation.getTownRank(town).toString());
@@ -1132,7 +1132,7 @@ public class MyTownDatasource extends DatasourceSQL {
     
     public boolean updateTownToNationLink(Town town, Nation nation) {
         try {
-            PreparedStatement s = prepare("UPDATE " + prefix + "TownsToNations SET rank = ? WHERE town = ?, nation = ?", true);
+            PreparedStatement s = prepare("UPDATE " + prefix + "TownsToNations SET ranks = ? WHERE town = ?, nation = ?", true);
             s.setString(1, nation.getTownRank(town).toString());
             s.setString(2, town.getName());
             s.setString(3, nation.getName());
@@ -1459,7 +1459,7 @@ public class MyTownDatasource extends DatasourceSQL {
     
     public boolean deleteRankPermission(Rank rank, String perm) {
         try {
-            PreparedStatement s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE node = ? AND rank = ? AND townName = ?", true);
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE node = ? AND ranks = ? AND townName = ?", true);
             s.setString(1, perm);
             s.setString(2, rank.getName());
             s.setString(3, rank.getTown().getName());
