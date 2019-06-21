@@ -47,8 +47,8 @@ if (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty()) {
     ext.config.build_number = System.env.TRAVIS_TAG.substring(0, System.env.TRAVIS_TAG.length()-1)
     ext.config.build_type = System.env.TRAVIS_TAG.substring(System.env.TRAVIS_TAG.length()-1)
 } else {
-    ext.config.build_number = "0000"
-    ext.config.build_type = "r"
+    ext.config.build_number = "0001"
+    ext.config.build_type = "tk"
 }
 
 // Configure Everything
